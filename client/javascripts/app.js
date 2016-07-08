@@ -4,6 +4,7 @@
     'btford.socket-io',
     'socket.services',
     'wiki.routes',
-    'wiki.component'
+    'wiki.component',
+    'wiki.directive'
   ]);
 })();

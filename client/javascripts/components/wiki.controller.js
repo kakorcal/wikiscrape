@@ -7,8 +7,12 @@
     
     let vm = this;
     
-    vm.generateArticle = function(){
-      Socket.emit('generate article');
+    vm.generateArticle = function(path){
+      if(path){
+        Socket.emit('generate article', path);
+      }else{
+        Socket.emit('generate article');
+      }
     };
 
     Socket.on('receive article', data=>{

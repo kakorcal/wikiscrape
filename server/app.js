@@ -25,16 +25,18 @@ server.listen(PORT, ()=>{
 io.on('connection', socket=>{
   console.log('CLIENT HANDSHAKE');
 
-  socket.on('generate article', ()=>{
+  socket.on('generate article', PATH=>{
     let title, content, linkTags, scriptTags, styles, scripts;
-    rp({uri: `${BASE_URL}${RANDOM_PAGE}`, transform: body=>cheerio.load(body)})
+    let uri = PATH ? `${BASE_URL}${PATH}` : `${BASE_URL}${RANDOM_PAGE}`;
+
+    rp({uri, transform: body=>cheerio.load(body)})
       .then($=>{
         title = $('#firstHeading').html();
         content = $('#bodyContent').html()
             .replace(/href=('|"|‘|’|“|”)\/wiki\/.+?('|"|‘|’|“|”)/g, match=>{
-              return `ng-click=(vm.generateArticle(${match.substring(5, match.length)}))`;
+              return `href='foo' ng-click=(vm.generateArticle(${match.substring(5, match.length)}))`;
             });
-
+        
         linkTags = $("link[rel='stylesheet']").map((idx, elem)=>{
           return rp(`${BASE_URL}${elem.attribs.href}`);
         }).get();        
@@ -48,6 +50,7 @@ io.on('connection', socket=>{
       .catch(err=>{
         socket.emit('Error', 'Failed To Retrieve Data');
       });
+
       //***************************************************************************
         // don't need scripts for now
           // scriptTags = $('head script[src]').map((idx, elem)=>{
