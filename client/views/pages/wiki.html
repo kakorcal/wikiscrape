@@ -2,7 +2,7 @@
   <md-toolbar class='md-warn md-hue-1'>
     <div class='md-toolbar-tools wiki-title'>
       <h3 flex>WIKISCRAPE</h3>
-      <md-button ng-click='vm.generateRandom()' class='md-primary md-raised md-hue-3'>GENERATE</md-button>
+      <md-button ng-click='vm.generateArticle()' class='md-primary md-raised md-hue-3'>GENERATE</md-button>
     </div>
   </md-toolbar>  
 </div>
@@ -15,8 +15,10 @@
     <md-toolbar flex layout='row' layout-padding class='md-hue-3'></md-toolbar>
   </md-sidenav>
   <md-content flex layout-padding id='wiki'>
+    <style>{{vm.styles}}</style>
     <h1 ng-hide='vm.title'>Click 'GENERATE' to find a random article on Wikipedia!</h1>
     <h1 ng-show='vm.title' ng-bind-html='vm.title'></h1>
     <div ng-bind-html='vm.content'></div>
+    <script>{{vm.scripts}}</script>
   </md-content> 
 </div>

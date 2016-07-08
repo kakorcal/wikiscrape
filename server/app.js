@@ -25,25 +25,21 @@ server.listen(PORT, ()=>{
 io.on('connection', socket=>{
   console.log('CLIENT HANDSHAKE');
 
-  socket.on('generate random', ()=>{
-    let title, content, links, styles, scripts;
+  socket.on('generate article', ()=>{
+    let title, content, linkTags, scriptTags, styles, scripts;
     rp({uri: `${BASE_URL}${RANDOM_PAGE}`, transform: body=>cheerio.load(body)})
       .then($=>{
         title = $('#firstHeading').html();
-        content = $('#bodyContent').html();
-        // content = $('#content').html();
+        content = $('#bodyContent').html()
+            .replace(/href=('|"|‘|’|“|”)\/wiki\/.+?('|"|‘|’|“|”)/g, match=>{
+              return `ng-click=(vm.generateArticle(${match.substring(5, match.length)}))`;
+            });
 
-        links = $("link[rel='stylesheet']").map((idx, elem)=>{
+        linkTags = $("link[rel='stylesheet']").map((idx, elem)=>{
           return rp(`${BASE_URL}${elem.attribs.href}`);
         }).get();        
 
-        scripts = $('head script').filter((idx, elem)=>{
-          // keep this to handle error
-          // let sub = $(elem).attr('src').substring(0,4);
-          return $(elem).attr('src');
-        }).get();
-
-        return Promise.all(links);
+        return Promise.all(linkTags);
       })
       .then(stylesheets=>{
         styles = stylesheets.join('');
@@ -52,6 +48,16 @@ io.on('connection', socket=>{
       .catch(err=>{
         socket.emit('Error', 'Failed To Retrieve Data');
       });
+      //***************************************************************************
+        // don't need scripts for now
+          // scriptTags = $('head script[src]').map((idx, elem)=>{
+          //   return rp(`${BASE_URL}${elem.attribs.src}`);
+          // }).get();
+        // .then(javascripts=>{
+        //   scripts = javascripts.join('');
+        //   socket.emit('receive article', {title, content, styles, scripts});
+        // })
+      //***************************************************************************
   });   
 
   socket.on('disconnect', ()=>{

@@ -7,14 +7,15 @@
     
     let vm = this;
     
-    vm.generateRandom = function(){
-      Socket.emit('generate random');
+    vm.generateArticle = function(){
+      Socket.emit('generate article');
     };
 
     Socket.on('receive article', data=>{
       vm.title = data.title;
       vm.content = data.content;
       vm.styles = data.styles;
+      // vm.scripts = data.scripts;
     });
 
     Socket.on('Error', data=>{
