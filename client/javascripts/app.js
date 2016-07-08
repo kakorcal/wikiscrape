@@ -1,5 +1,5 @@
 (()=>{
-  angular.module('wikiscrape', [
+  angular.module('wikiscraper', [
     'ngMaterial',
     'btford.socket-io',
     'socket.services',

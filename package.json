@@ -1,5 +1,5 @@
 {
-  "name": "wikiscrape",
+  "name": "wikiscraper",
   "version": "1.0.0",
   "description": "",
   "main": "./server/app",
