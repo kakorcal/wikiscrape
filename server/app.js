@@ -24,4 +24,8 @@ server.listen(PORT, ()=>{
 
 io.on('connection', socket=>{
   console.log('CLIENT HANDSHAKE');
+
+  io.on('disconnect', ()=>{
+    console.log('CLIENT DISCONNECT');
+  });
 });
