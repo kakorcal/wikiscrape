@@ -3,9 +3,9 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const cheerio = require('cheerio');
-const request = require('request');
-const BASE_URL = 'https://en.wikipedia.org/wiki/';
-const RANDOM_PAGE = 'Special:RandomInCategory/Featured_articles';
+const rp = require('request-promise');
+const BASE_URL = 'https://en.wikipedia.org';
+const RANDOM_PAGE = '/wiki/Special:RandomInCategory/Featured_articles';
 const PORT = process.env.PORT || 5000;
 
 app.use(require('morgan')('dev'));
@@ -26,13 +26,32 @@ io.on('connection', socket=>{
   console.log('CLIENT HANDSHAKE');
 
   socket.on('generate random', ()=>{
-    request(`${BASE_URL}${RANDOM_PAGE}`, (err, res, body)=>{
-      let $ = cheerio.load(body);
-      let title = $('#firstHeading').html();
-      let content = $('#bodyContent').html();
-      socket.emit('receive article', {title, content});
-    });
+    let title, content, links, styles, scripts;
+    rp({uri: `${BASE_URL}${RANDOM_PAGE}`, transform: body=>cheerio.load(body)})
+      .then($=>{
+        title = $('#firstHeading').html();
+        content = $('#bodyContent').html();
+        // content = $('#content').html();
 
+        links = $("link[rel='stylesheet']").map((idx, elem)=>{
+          return rp(`${BASE_URL}${elem.attribs.href}`);
+        }).get();        
+
+        scripts = $('head script').filter((idx, elem)=>{
+          // keep this to handle error
+          // let sub = $(elem).attr('src').substring(0,4);
+          return $(elem).attr('src');
+        }).get();
+
+        return Promise.all(links);
+      })
+      .then(stylesheets=>{
+        styles = stylesheets.join('');
+        socket.emit('receive article', {title, content, styles});
+      })
+      .catch(err=>{
+        socket.emit('Error', 'Failed To Retrieve Data');
+      });
   });   
 
   socket.on('disconnect', ()=>{
