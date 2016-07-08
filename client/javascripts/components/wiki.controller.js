@@ -2,7 +2,10 @@
   angular.module('wiki.component', ['ngSanitize'])
     .controller('WikiController', WikiController)
     .directive('compile', compile);
-    
+  
+  //***************************************************************************
+  // NOT MY CODE!! check out: https://github.com/angular/angular.js/issues/4992
+  //***************************************************************************
   function compile($compile) {
     // directive factory creates a link function
     return function(scope, element, attrs) {
@@ -27,6 +30,10 @@
   };
 
   compile.$inject = ['$compile'];
+  //***************************************************************************
+    // END
+  //***************************************************************************
+
 
   function WikiController($scope, $sce, $compile, Socket){
     Socket.connect();
@@ -56,7 +63,6 @@
       Socket.disconnect(true);
     });
 
-    $scope.$watch('vm.content');
   }
 
   WikiController.$inject = ['$scope', '$sce', '$compile', 'Socket'];
