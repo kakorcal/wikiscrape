@@ -4,7 +4,7 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const cheerio = require('cheerio');
 const request = require('request');
-const BASE_URL = 'https://www.wikipedia.org/';
+const BASE_URL = 'https://en.wikipedia.org/wiki/';
 const RANDOM_PAGE = 'Special:RandomInCategory/Featured_articles';
 const PORT = process.env.PORT || 5000;
 
@@ -24,6 +24,16 @@ server.listen(PORT, ()=>{
 
 io.on('connection', socket=>{
   console.log('CLIENT HANDSHAKE');
+
+  socket.on('generate random', ()=>{
+    request(`${BASE_URL}${RANDOM_PAGE}`, (err, res, body)=>{
+      let $ = cheerio.load(body);
+      let title = $('#firstHeading').html();
+      let content = $('#bodyContent').html();
+      socket.emit('receive article', {title, content});
+    });
+
+  });   
 
   socket.on('disconnect', ()=>{
     console.log('CLIENT DISCONNECT');

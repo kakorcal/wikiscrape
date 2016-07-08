@@ -1,9 +1,10 @@
 <md-toolbar class='md-accent md-hue-2'>
   <div class='md-toolbar-tools'>
     <h3 flex>WIKISCRAPE</h3>
-    <md-button class='md-primary md-raised'>GENERATE</md-button>
+    <md-button ng-click='vm.generateRandom()' class='md-primary md-raised'>GENERATE</md-button>
   </div>
 </md-toolbar>
 <md-content flex layout-padding id='wiki'>
-  Click 'GENERATE' to find a random article on Wikipedia!
-</md-content>
+  <h1>{{vm.title ? vm.title : "Click 'GENERATE' to find a random article on Wikipedia!"}}</h1>
+  <div ng-bind-html='vm.content'></div>
+</md-content> 
