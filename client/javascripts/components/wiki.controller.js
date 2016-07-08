@@ -35,7 +35,7 @@
   //***************************************************************************
 
 
-  function WikiController($scope, $sce, $compile, Socket){
+  function WikiController($scope, $sce, Socket){
     Socket.connect();
     
     let vm = this;
@@ -65,5 +65,5 @@
 
   }
 
-  WikiController.$inject = ['$scope', '$sce', '$compile', 'Socket'];
+  WikiController.$inject = ['$scope', '$sce', 'Socket'];
 })();
