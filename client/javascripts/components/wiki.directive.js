@@ -1,31 +1,50 @@
 (()=>{
-  angular.module('wiki.directive', ['ngSanitize'])
-    .directive('compile', Compile);
+  angular.module('wiki.directive', [])
+    .directive('compileHtml', compile);
+  
+  function compile($parse, $sce, $compile){
+    return {
+      restrict: "A",
+      link: function(scope, element, attr){
+        let expression = $sce.parseAsHtml(attr.compileHtml);
+        debugger;
 
-  function Compile($compile){
-    return function(scope, element, attrs){
-      var ensureCompileRunsOnce = scope.$watch(
-        function(scope) {
-           // watch the 'compile' expression for changes
-          return scope.$eval(attrs.compile);
-        },
-        function(value) {
-          // when the 'compile' expression changes
-          // assign it into the current DOM
-          element.html(value);
+        let getResult = function(){
+          let ex = expression(scope);
+          debugger;
+          return ex;
+        };
 
-          // compile the new DOM and link it to the current
-          // scope.
-          // NOTE: we only compile .childNodes so that
-          // we don't get into infinite loop compiling ourselves
-          $compile(element.contents())(scope);
+        scope.$watch(getResult, function(newValue){
+          let linker = $compile(newValue);
+          element.append(linker(scope));
+          debugger;
+        });
 
-          // Use un-watch feature to ensure compilation happens only once.
-          ensureCompileRunsOnce();
-        }
-      );
-    }
+      }
+    };
   }
 
-  Compile.$inject = ['$compile'];
+  compile.$inject = ['$parse', '$sce','$compile'];
+
+
+  // function compile($compile){
+  //   debugger;
+  //   return function(scope, element, attrs){
+  //     debugger;
+  //     scope.$watch(
+  //       function(scope) {
+  //         debugger;
+  //         return scope.$eval(attrs.compileHtml);
+  //       },
+  //       function(value) {
+  //         element.html(value);
+  //         $compile(element.contents())(scope);
+  //         debugger;
+  //       }
+  //     );
+  //   }
+  // }
+
+  // compile.$inject = ['$compile'];
 })();

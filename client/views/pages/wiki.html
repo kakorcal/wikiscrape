@@ -18,8 +18,9 @@
     <style>{{vm.styles}}</style>
     <h1 ng-hide='vm.title'>Click 'GENERATE' to find a random article on Wikipedia!</h1>
     <h1 ng-show='vm.title' ng-bind-html='vm.title'></h1>
-    <!-- <div compile='vm.content'></div> -->
-    <div>{{vm.content}}</div>
+    <div ng-show='vm.content' compile='vm.content'></div>
+    <!-- <div ng-bind-html='vm.content'></div> -->
+    <!-- <div>{{vm.content}}</div> -->
     <!-- <script>{{vm.scripts}}</script>-->
   </md-content> 
 </div>

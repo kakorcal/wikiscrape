@@ -34,7 +34,7 @@ io.on('connection', socket=>{
         title = $('#firstHeading').html();
         content = $('#bodyContent').html()
             .replace(/href=('|"|‘|’|“|”)\/wiki\/.+?('|"|‘|’|“|”)/g, match=>{
-              return `href='foo' ng-click=(vm.generateArticle(${match.substring(5, match.length)}))`;
+              return `href='#' ng-click=vm.generateArticle(${match.substring(5, match.length)})`;
             });
         
         linkTags = $("link[rel='stylesheet']").map((idx, elem)=>{

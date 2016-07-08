@@ -1,8 +1,34 @@
 (()=>{
   angular.module('wiki.component', ['ngSanitize'])
-    .controller('WikiController', WikiController);
+    .controller('WikiController', WikiController)
+    .directive('compile', compile);
+    
+  function compile($compile) {
+    // directive factory creates a link function
+    return function(scope, element, attrs) {
+      scope.$watch(
+        function(scope) {
+          // watch the 'compile' expression for changes
+          return scope.$eval(attrs.compile);
+        },
+        function(value) {
+          // when the 'compile' expression changes
+          // assign it into the current DOM
+          element.html(value);
 
-  function WikiController($scope, Socket){
+          // compile the new DOM and link it to the current
+          // scope.
+          // NOTE: we only compile .childNodes so that
+          // we don't get into infinite loop compiling ourselves
+          $compile(element.contents())(scope);
+        }
+      );
+    };
+  };
+
+  compile.$inject = ['$compile'];
+
+  function WikiController($scope, $sce, $compile, Socket){
     Socket.connect();
     
     let vm = this;
@@ -17,7 +43,7 @@
 
     Socket.on('receive article', data=>{
       vm.title = data.title;
-      vm.content = data.content;
+      vm.content = $sce.trustAsHtml(data.content);
       vm.styles = data.styles;
       // vm.scripts = data.scripts;
     });
@@ -29,7 +55,9 @@
     $scope.$on('$locationChangeStart', e=>{
       Socket.disconnect(true);
     });
+
+    $scope.$watch('vm.content');
   }
 
-  WikiController.$inject = ['$scope', 'Socket'];
+  WikiController.$inject = ['$scope', '$sce', '$compile', 'Socket'];
 })();
