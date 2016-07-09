@@ -35,9 +35,9 @@ io.on('connection', socket=>{
       .then($=>{
         title = $('#firstHeading').html();
         content = $('#bodyContent').html()
-            .replace(/href=('|"|‘|’|“|”)\/wiki\/.+?('|"|‘|’|“|”)/g, match=>{
-              return `href='#' ng-click=vm.generateArticle(${match.substring(5, match.length)})`;
-            });
+          .replace(/href=('|"|‘|’|“|”)\/wiki\/.+?('|"|‘|’|“|”)/g, match=>{
+            return `href='#' ng-click=vm.generateArticle(${match.substring(5, match.length)})`;
+          });
         
         linkTags = $("link[rel='stylesheet']").map((idx, elem)=>{
           return rp(`${BASE_URL}${elem.attribs.href}`);
